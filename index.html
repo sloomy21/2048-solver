@@ -3,31 +3,123 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>SALMAN - AI Solver (Fixed)</title>
+<title>حل دمج الحيوانات 
+ </title>
 <style>
-/* (kept your original styling - unchanged for brevity) */
+/* CSS Variables for Theme Switching */
+:root {
+  /* Light Theme (Default) */
+  --bg-gradient: linear-gradient(135deg, #e0f2fe 0%, #f3e8ff 100%);
+  --container-bg: white;
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --panel-bg: #eff6ff;
+  --board-bg: #d1d5db;
+  --cell-empty: #e5e7eb;
+  --shadow: 0 4px 6px rgba(0,0,0,.1);
+  --shadow-light: 0 4px 6px rgba(0,0,0,.05);
+  --border-color: #e5e7eb;
+  --btn-text: white;
+  --eval-normal: white;
+  --eval-normal-text: #374151;
+  --stats-bg: #f9fafb;
+  --performance-bg: #fef3c7;
+  --performance-text: #92400e;
+}
+
+[data-theme="dark"] {
+  --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  --container-bg: #1f2937;
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --text-muted: #9ca3af;
+  --panel-bg: #374151;
+  --board-bg: #4b5563;
+  --cell-empty: #374151;
+  --shadow: 0 4px 6px rgba(0,0,0,.3);
+  --shadow-light: 0 4px 6px rgba(0,0,0,.2);
+  --border-color: #4b5563;
+  --btn-text: #f9fafb;
+  --eval-normal: #4b5563;
+  --eval-normal-text: #f9fafb;
+  --stats-bg: #374151;
+  --performance-bg: #78350f;
+  --performance-text: #fef3c7;
+}
+
+/* Base Styles */
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:linear-gradient(135deg,#e0f2fe 0%,#f3e8ff 100%);min-height:100vh;padding:20px}
-.container{max-width:600px;margin:0 auto}
-.header{text-align:center;margin-bottom:30px}
-.header h1{color:#1f2937;font-size:2.5em;margin-bottom:10px}
-.header p{color:#6b7280}
-.game-container{background:white;border-radius:12px;padding:30px;box-shadow:0 4px 6px rgba(0,0,0,.1);margin-bottom:20px}
-.score-row{display:flex;justify-content:space-between;margin-bottom:20px}
-.score{font-size:1.2em;font-weight:bold;color:#374151}
-.moves{color:#6b7280}
-.evaluation-panel{background:#eff6ff;border-radius:8px;padding:15px;margin-bottom:20px}
-.evaluation-title{font-weight:600;color:#374151;margin-bottom:10px;font-size:.9em}
-.evaluation-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.eval-item{padding:10px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;font-size:.9em}
-.eval-disabled{background:#e5e7eb;color:#9ca3af}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+  background: var(--bg-gradient);
+  min-height:100vh;
+  padding:20px;
+  transition: background 0.3s ease;
+}
+.container{max-width:800px;margin:0 auto}
+.header{text-align:center;margin-bottom:20px}
+.header h1{color:var(--text-primary);font-size:2.2em;margin-bottom:6px}
+.header p{color:var(--text-secondary)}
+.game-container{
+  background: var(--container-bg);
+  border-radius:12px;
+  padding:20px;
+  box-shadow: var(--shadow);
+  margin-bottom:20px;
+  transition: all 0.3s ease;
+}
+.score-row{display:flex;justify-content:space-between;margin-bottom:10px}
+.score{font-size:1.1em;font-weight:bold;color:var(--text-primary)}
+.moves{color:var(--text-secondary)}
+.evaluation-panel{
+  background:var(--panel-bg);
+  border-radius:8px;
+  padding:12px;
+  margin-bottom:12px;
+  transition: all 0.3s ease;
+}
+.evaluation-title{font-weight:600;color:var(--text-primary);margin-bottom:8px;font-size:.9em}
+.evaluation-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.eval-item{
+  padding:8px;
+  border-radius:6px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:.85em;
+  transition: all 0.3s ease;
+}
+.eval-disabled{background:#e5e7eb;color:var(--text-muted)}
 .eval-chosen{background:#10b981;color:white;font-weight:bold}
 .eval-best{background:#3b82f6;color:white;font-weight:600}
-.eval-normal{background:white;color:#374151}
-.board{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#d1d5db;padding:12px;border-radius:8px;margin-bottom:20px}
-.cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:1.5em;font-weight:bold;border-radius:6px;cursor:pointer;transition:all .2s}
-.cell:hover{transform:scale(1.05)}
-.cell-0{background:#e5e7eb}
+.eval-normal{
+  background:var(--eval-normal);
+  color:var(--eval-normal-text);
+}
+.board{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  background:var(--board-bg);
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:12px;
+  transition: all 0.3s ease;
+}
+.cell{
+  aspect-ratio:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.4em;
+  font-weight:bold;
+  border-radius:6px;
+  cursor:pointer;
+  transition:all .15s;
+}
+.cell:hover{transform:scale(1.03)}
+.cell-0{background:var(--cell-empty)}
 .cell-1{background:#dbeafe;color:#1e40af}
 .cell-2{background:#bfdbfe;color:#1e40af}
 .cell-3{background:#93c5fd;color:#1e3a8a}
@@ -39,48 +131,236 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .cell-9{background:#facc15;color:#854d0e}
 .cell-10{background:#86efac;color:#14532d}
 .cell-11{background:#c084fc;color:#581c87}
-.controls{display:flex;flex-direction:column;gap:15px}
+.controls{display:flex;flex-direction:column;gap:12px}
 .button-row{display:flex;gap:10px;justify-content:center}
-button{padding:12px 24px;border:none;border-radius:8px;font-weight:600;cursor:pointer;transition:all .2s;font-size:1em}
+button{
+  padding:10px 18px;
+  border:none;
+  border-radius:8px;
+  font-weight:600;
+  cursor:pointer;
+  transition:all .15s;
+  font-size:.95em;
+  color: var(--btn-text);
+}
 button:disabled{opacity:.5;cursor:not-allowed}
-.btn-green{background:#10b981;color:white}
+.btn-green{background:#10b981}
 .btn-green:hover:not(:disabled){background:#059669}
-.btn-red{background:#ef4444;color:white}
+.btn-red{background:#ef4444}
 .btn-red:hover:not(:disabled){background:#dc2626}
-.btn-blue{background:#3b82f6;color:white}
+.btn-blue{background:#3b82f6}
 .btn-blue:hover:not(:disabled){background:#2563eb}
-.btn-orange{background:#f97316;color:white}
+.btn-orange{background:#f97316}
 .btn-orange:hover:not(:disabled){background:#ea580c}
-.btn-gray{background:#6b7280;color:white}
+.btn-gray{background:#6b7280}
 .btn-gray:hover:not(:disabled){background:#4b5563}
-.slider-row{display:flex;align-items:center;justify-content:center;gap:15px}
-.slider-row label{font-weight:600;color:#374151;font-size:.9em}
+.btn-theme {
+  background: var(--container-bg);
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+}
+.btn-theme:hover {
+  background: var(--panel-bg);
+}
+.slider-row{display:flex;align-items:center;justify-content:center;gap:10px}
+.slider-row label{font-weight:600;color:var(--text-primary);font-size:.9em}
 .slider-row input{width:150px}
-.slider-row span{color:#6b7280;font-size:.9em}
+.slider-row span{color:var(--text-secondary);font-size:.9em}
 .tile-selector{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap}
-.tile-selector label{font-weight:600;color:#374151;font-size:.9em}
+.tile-selector label{font-weight:600;color:var(--text-primary);font-size:.9em}
 .tile-buttons{display:flex;gap:5px;flex-wrap:wrap}
-.tile-btn{width:40px;height:40px;padding:0;font-size:.9em;border:2px solid transparent}
-.tile-btn.selected{border-color:#3b82f6;transform:scale(1.1)}
-.status{text-align:center;min-height:50px;display:flex;align-items:center;justify-content:center;font-weight:600}
+.tile-btn{
+  width:40px;
+  height:40px;
+  padding:0;
+  font-size:.9em;
+  border:2px solid transparent;
+  color: var(--btn-text);
+}
+.tile-btn.selected{border-color:#3b82f6;transform:scale(1.08)}
+.status{
+  text-align:center;
+  min-height:50px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:600;
+}
 .status-setup{color:#3b82f6}
 .status-thinking{color:#3b82f6}
 .status-waiting{color:#10b981}
-.status-move{color:#6b7280}
-.status-gameover{color:#ef4444;font-size:1.2em}
-.info-box{background:white;border-radius:12px;padding:30px;box-shadow:0 4px 6px rgba(0,0,0,.1)}
-.info-box h3{color:#1f2937;margin-bottom:15px}
-.info-box p{color:#6b7280;margin-bottom:10px;font-size:.9em;line-height:1.6}
-.spinner{display:inline-block;width:16px;height:16px;border:2px solid #3b82f6;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite}
+.status-move{color:var(--text-secondary)}
+.status-gameover{color:#ef4444;font-size:1.1em}
+.info-box{
+  background: var(--container-bg);
+  border-radius:12px;
+  padding:18px;
+  box-shadow: var(--shadow-light);
+  transition: all 0.3s ease;
+}
+.info-box h3{color:var(--text-primary);margin-bottom:10px}
+.info-box p{color:var(--text-secondary);margin-bottom:8px;font-size:.9em;line-height:1.5}
+.spinner{
+  display:inline-block;
+  width:14px;
+  height:14px;
+  border:2px solid #3b82f6;
+  border-top-color:transparent;
+  border-radius:50%;
+  animation:spin .6s linear infinite
+}
 @keyframes spin{to{transform:rotate(360deg)}}
 .hidden{display:none}
+.control-row{display:flex;gap:10px;align-items:center;justify-content:center;flex-wrap:wrap}
+.small{font-size:0.85em;color:var(--text-secondary)}
+
+/* تحسينات إضافية */
+.stats-panel {
+  background:var(--stats-bg);
+  border-radius:8px;
+  padding:12px;
+  margin-bottom:12px;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  transition: all 0.3s ease;
+}
+.stat-item {
+  text-align:center;
+}
+.stat-value {
+  font-size:1.2em;
+  font-weight:bold;
+  color:var(--text-primary);
+}
+.stat-label {
+  font-size:0.8em;
+  color:var(--text-secondary);
+}
+.high-score {
+  color:#f97316;
+}
+.progress-container {
+  margin-top:8px;
+}
+.progress-bar {
+  height:6px;
+  background:var(--cell-empty);
+  border-radius:3px;
+  overflow:hidden;
+}
+.progress-fill {
+  height:100%;
+  background:#10b981;
+  transition:width 0.3s ease;
+}
+.performance-info {
+  background:var(--performance-bg);
+  border-radius:6px;
+  padding:8px 12px;
+  margin-top:8px;
+  font-size:0.8em;
+  color:var(--performance-text);
+}
+.keyboard-hint {
+  font-size:0.75em;
+  color:var(--text-secondary);
+  margin-top:4px;
+  text-align:center;
+}
+
+/* Theme Toggle Switch */
+.theme-toggle {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.theme-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #4b5563;
+  transition: .4s;
+  border-radius: 34px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #3b82f6;
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.theme-label {
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.9em;
+}
+
+/* Dark mode specific adjustments */
+[data-theme="dark"] select,
+[data-theme="dark"] input[type="number"] {
+  background: var(--panel-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+
+[data-theme="dark"] .eval-disabled {
+  background: #374151;
+  color: #6b7280;
+}
 </style>
 </head>
 <body>
 <div class="container">
+  <!-- Theme Toggle -->
+  <div class="theme-toggle">
+    <span class="theme-label">🌙</span>
+    <label class="theme-switch">
+      <input type="checkbox" id="themeToggle">
+      <span class="slider"></span>
+    </label>
+    <span class="theme-label">☀️</span>
+  </div>
+
   <div class="header">
-    <h1>حل حدث دمج الحيوانات</h1>
-    <p>تحت وصف البرنامج</p>
+    <h1>AI Solver (Light/Dark Mode)</h1>
+    <p>Enhanced AI with theme switching — الذكاء الاصطناعي مع وضع الليل.</p>
   </div>
 
   <div class="game-container">
@@ -89,11 +369,31 @@ button:disabled{opacity:.5;cursor:not-allowed}
       <div class="moves">Moves: <span id="moves">0</span></div>
     </div>
 
+    <!-- لوحة الإحصائيات -->
+    <div class="stats-panel">
+      <div class="stat-item">
+        <div class="stat-value" id="maxTile">0</div>
+        <div class="stat-label">Max Tile</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value" id="emptyCells">16</div>
+        <div class="stat-label">Empty Cells</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value high-score" id="highScore">0</div>
+        <div class="stat-label">High Score</div>
+      </div>
+    </div>
+
     <div id="evaluation" class="evaluation-panel hidden">
       <div class="evaluation-title">AI Move Evaluation:</div>
       <div class="evaluation-grid" id="evalGrid"></div>
-      <div style="text-align:center;margin-top:10px;font-size:.85em;color:#374151;">
+      <div style="text-align:center;margin-top:8px;font-size:.85em;color:var(--text-primary);">
         <span id="chosenMove"></span>
+      </div>
+      <!-- مؤشر الأداء -->
+      <div class="performance-info hidden" id="performanceInfo">
+        <span class="spinner"></span> <span id="thinkingTime">Calculating...</span>
       </div>
     </div>
 
@@ -103,20 +403,49 @@ button:disabled{opacity:.5;cursor:not-allowed}
       <div id="setupControls">
         <div class="button-row">
           <button class="btn-green" onclick="startSolving()">▶ Start AI Solver</button>
+          <button class="btn-blue" onclick="generateRandomBoard()">🎲 Random Board</button>
         </div>
-        <p style="text-align:center;color:#6b7280;font-size:.85em;margin-top:5px;" dir="rtl">حط وحدة عالاقل عشان يبدا :)</p>
+        <p style="text-align:center;color:var(--text-secondary);font-size:.85em;margin-top:6px;">Place at least one tile to start</p>
+        <p class="keyboard-hint">Tip: Use arrow keys to test moves manually in setup mode</p>
       </div>
 
       <div id="solverControls" class="hidden">
-        <div class="button-row">
-          <button id="playBtn" class="btn-green" onclick="togglePlay()">▶ Play</button>
-          <button class="btn-blue" onclick="stepMove()" id="stepBtn">⚡ Step</button>
-          <button class="btn-orange" onclick="backToSetup()">✏ Edit Board</button>
+        <div class="control-row">
+          <div class="button-row">
+            <button id="playBtn" class="btn-green" onclick="togglePlay()">▶ Play</button>
+            <button class="btn-blue" onclick="stepMove()" id="stepBtn">⚡ Step</button>
+            <button class="btn-orange" onclick="backToSetup()">✏ Edit Board</button>
+            <button class="btn-gray" onclick="restartGame()">🔄 Restart</button>
+          </div>
         </div>
+
+        <div class="control-row">
+          <label class="small">Algorithm:</label>
+          <select id="algoSelect" onchange="updateSettings()">
+            <option value="expectimax">Expectimax (recommended)</option>
+            <option value="minimax">Minimax (adversarial)</option>
+          </select>
+
+          <label class="small">Depth:</label>
+          <input type="range" id="depthSlider" min="1" max="6" value="3" oninput="updateSettings(this.value)">
+          <span id="depthValue" class="small">3</span>
+
+          <label class="small">P(tile=1):</label>
+          <input type="number" id="p1" min="0" max="1" step="0.05" value="0.9" oninput="updateSettings()">
+        </div>
+
+        <!-- شريط التقدم -->
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+          </div>
+        </div>
+
       </div>
 
       <div class="button-row">
         <button class="btn-gray" onclick="resetGame()">↻ Clear Board</button>
+        <button class="btn-theme" onclick="toggleThemeManual()">🎨 Toggle Theme</button>
       </div>
 
       <div class="slider-row">
@@ -126,7 +455,7 @@ button:disabled{opacity:.5;cursor:not-allowed}
       </div>
 
       <div class="tile-selector">
-        <label id="tileSelectorLabel" dir="rtl">اختر القيمة:</label>
+        <label id="tileSelectorLabel">Place tile:</label>
         <div class="tile-buttons" id="tileButtons"></div>
       </div>
 
@@ -136,37 +465,72 @@ button:disabled{opacity:.5;cursor:not-allowed}
     </div>
   </div>
 
-  <div class="info-box" dir="rtl">
-    <h3>طريقة الاستعمال </h3>
-    <p><strong>البداية :</strong> اختر الارقام حسب ماهي طالعة لك بالعبة </p>
-    <p><strong>التعديل :</strong> في حال ودك تغير الارقام، اضغط على الرقم لتغيير القيمة</p>
-    <p><strong>وضع الحل :</strong> اضغط "Start AI Solver" ليقوم الذكاء الاصطناعي بحل تكوين اللوحة الخاص بك</p>
-    <p><strong>قوانين الدمج :</strong> 1+1=2, 2+2=3, 3+3=4... الى ان توصل 11</p>
-    <p><strong>التحكم:</strong> بعد كل حركة للذكاء الاصطناعي، اختر أي قيمة حيوان (1-11) لوضعها</p>
+  <div class="info-box">
+    <h3>What's New - Dark Mode</h3>
+    <p>أضفت وضع الليل (Dark Mode) مع الميزات التالية:</p>
+    <ul>
+      <li>تبديل سلس بين الوضع الفاتح والداكن</li>
+      <li>تصميم متكامل للوضع الداكن مع ألوان مريحة للعين</li>
+      <li>حفظ تفضيل المستخدم في localStorage</li>
+      <li>زر يدوي للتبديل بين الوضعين</li>
+      <li>تعديل جميع العناصر لتتناسب مع كلا الوضعين</li>
+    </ul>
+    <p class="small">جرب التبديل بين الوضعين باستخدام الزر أو التبديل التلقائي!</p>
   </div>
 </div>
-
-<footer>
-    <p style="text-align:center;color:#6b7280;font-size:.85em;margin-top:20px;">&copy; 2025 SALMAN QTL 172</p>
-</footer>
 
 <script>
 /* === Game state === */
 let board = Array.from({length:4},()=>Array(4).fill(0));
 let score = 0, moves = 0;
+let highScore = localStorage.getItem('highScore') || 0;
 let selectedValue = 1;
 let setupMode = true, isPlaying = false, gameOver = false;
 let waitingForTile = false;
 let pendingBoard = null, pendingScore = 0, lastMove = '';
 let moveEvaluations = {};
 let speed = 500, playInterval = null;
+let startTime = 0;
+
+/* === AI settings & cache === */
+let aiAlgo = 'expectimax';
+let aiDepth = 3;
+let prob1 = 0.9;
+const cache = new Map();
+
+/* === Theme Management === */
+let currentTheme = localStorage.getItem('theme') || 'light';
+
+function initTheme() {
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  document.getElementById('themeToggle').checked = currentTheme === 'dark';
+}
+
+function toggleTheme() {
+  currentTheme = currentTheme === 'light' ? 'dark' : 'light';
+  document.documentElement.setAttribute('data-theme', currentTheme);
+  localStorage.setItem('theme', currentTheme);
+}
+
+function toggleThemeManual() {
+  toggleTheme();
+  // Update the toggle switch
+  document.getElementById('themeToggle').checked = currentTheme === 'dark';
+}
 
 /* === Init === */
 function init(){
+  initTheme();
   createTileButtons();
   renderBoard();
   updateDisplay();
+  updateStats();
+  document.addEventListener('keydown', handleKeyPress);
+  
+  // Add event listener for theme toggle
+  document.getElementById('themeToggle').addEventListener('change', toggleTheme);
 }
+
 function createTileButtons(){
   const container = document.getElementById('tileButtons');
   container.innerHTML = '';
@@ -178,6 +542,7 @@ function createTileButtons(){
     container.appendChild(btn);
   }
 }
+
 function selectTile(v){
   selectedValue = v;
   document.querySelectorAll('.tile-btn').forEach((b,idx)=>{
@@ -207,16 +572,20 @@ function handleCellClick(r,c){
   if(setupMode){
     board[r][c] = (board[r][c] === selectedValue) ? 0 : selectedValue;
     renderBoard();
+    updateStats();
   } else if(waitingForTile && pendingBoard[r][c] === 0){
     placeTile(r,c);
   }
 }
 
 function placeTile(r,c){
-  // commit pending board then place selected
   board = pendingBoard.map(row=>row.slice());
   board[r][c] = selectedValue;
   score += pendingScore;
+  if(score > highScore) {
+    highScore = score;
+    localStorage.setItem('highScore', highScore);
+  }
   waitingForTile = false;
   pendingBoard = null;
   pendingScore = 0;
@@ -224,6 +593,7 @@ function placeTile(r,c){
   if(isGameOver(board)){ gameOver = true; isPlaying = false; clearInterval(playInterval); }
   renderBoard();
   updateDisplay();
+  updateStats();
 }
 
 /* === Controls === */
@@ -256,9 +626,21 @@ function resetGame(){
   board = Array.from({length:4},()=>Array(4).fill(0));
   score = 0; moves = 0; gameOver=false; isPlaying=false; waitingForTile=false;
   pendingBoard = null; pendingScore = 0; lastMove=''; moveEvaluations={};
+  cache.clear();
   clearInterval(playInterval);
   if(!setupMode) backToSetup();
-  renderBoard(); updateDisplay();
+  renderBoard(); 
+  updateDisplay();
+  updateStats();
+}
+
+function restartGame(){
+  score = 0; moves = 0; gameOver=false; isPlaying=false; waitingForTile=false;
+  pendingBoard = null; pendingScore = 0; lastMove=''; moveEvaluations={};
+  cache.clear();
+  clearInterval(playInterval);
+  updateDisplay();
+  updateStats();
 }
 
 function togglePlay(){
@@ -267,6 +649,7 @@ function togglePlay(){
   else clearInterval(playInterval);
   updateDisplay();
 }
+
 function updateSpeed(val){
   speed = parseInt(val,10);
   document.getElementById('speedValue').textContent = speed + 'ms';
@@ -276,12 +659,45 @@ function updateSpeed(val){
   }
 }
 
+function updateSettings(val){
+  aiAlgo = document.getElementById('algoSelect').value;
+  aiDepth = parseInt(document.getElementById('depthSlider').value,10);
+  document.getElementById('depthValue').textContent = aiDepth;
+  prob1 = parseFloat(document.getElementById('p1').value) || 0.9;
+  cache.clear();
+}
+
+/* === Generate random board === */
+function generateRandomBoard(){
+  resetGame();
+  const numTiles = Math.floor(Math.random() * 3) + 2;
+  for(let i=0; i<numTiles; i++){
+    let placed = false;
+    while(!placed){
+      const r = Math.floor(Math.random() * 4);
+      const c = Math.floor(Math.random() * 4);
+      if(board[r][c] === 0){
+        board[r][c] = Math.random() < 0.9 ? 1 : 2;
+        placed = true;
+      }
+    }
+  }
+  renderBoard();
+  updateStats();
+}
+
 /* === Step / AI === */
 async function stepMove(){
   if(gameOver || waitingForTile) return;
   updateDisplay('thinking');
-  await new Promise(r=>setTimeout(r,100));
+  startTime = performance.now();
+  
+  await new Promise(r=>setTimeout(r,80));
   const bestMove = getBestMove();
+  
+  const endTime = performance.now();
+  const thinkTime = endTime - startTime;
+  
   if(bestMove){
     const result = bestMove.func(board);
     if(result.moved){
@@ -290,8 +706,14 @@ async function stepMove(){
       waitingForTile = true;
       lastMove = bestMove.name;
       moves++;
+      
+      const emptyCells = pendingBoard.flat().filter(c => c === 0).length;
+      const progress = ((16 - emptyCells) / 16) * 100;
+      document.getElementById('progressFill').style.width = progress + '%';
+      
+      document.getElementById('performanceInfo').classList.remove('hidden');
+      document.getElementById('thinkingTime').textContent = `AI thought for ${thinkTime.toFixed(0)}ms`;
     } else {
-      // no valid move produced
       gameOver = true; isPlaying=false; clearInterval(playInterval);
     }
   } else {
@@ -299,9 +721,10 @@ async function stepMove(){
   }
   renderBoard();
   updateDisplay();
+  updateStats();
 }
 
-/* === AI: choose best move using minimax === */
+/* === AI: choose best move using selected algorithm === */
 function getBestMove(){
   const movesList = [
     {func: moveLeft, name: 'LEFT'},
@@ -314,8 +737,9 @@ function getBestMove(){
   for(const m of movesList){
     const res = m.func(board);
     if(res.moved){
-      // evaluate resulting board with minimax depth 3
-      const evalScore = minimax(res.board, 3, false);
+      let evalScore;
+      if(aiAlgo === 'minimax') evalScore = minimax(res.board, aiDepth, false);
+      else evalScore = expectimax(res.board, aiDepth-1);
       moveEvaluations[m.name] = evalScore;
       if(evalScore > bestScore){
         bestScore = evalScore;
@@ -330,6 +754,8 @@ function getBestMove(){
 
 /* === Minimax === */
 function minimax(node, depth, maximizing){
+  const key = keyFor(node, depth, maximizing, 'minimax');
+  if(cache.has(key)) return cache.get(key);
   if(depth === 0 || isGameOver(node)) return evaluateBoard(node);
   if(maximizing){
     let maxEval = -Infinity;
@@ -340,9 +766,10 @@ function minimax(node, depth, maximizing){
         maxEval = Math.max(maxEval, minimax(res.board, depth-1, false));
       }
     }
-    return maxEval === -Infinity ? evaluateBoard(node) : maxEval;
+    const out = (maxEval === -Infinity) ? evaluateBoard(node) : maxEval;
+    cache.set(key,out);
+    return out;
   } else {
-    // chance node: simulate adding 1 or 2 in empty cells (adversarial: choose worst)
     const empty = [];
     for(let i=0;i<4;i++) for(let j=0;j<4;j++) if(node[i][j]===0) empty.push([i,j]);
     if(empty.length===0) return evaluateBoard(node);
@@ -354,8 +781,51 @@ function minimax(node, depth, maximizing){
         minEval = Math.min(minEval, minimax(nb, depth-1, true));
       }
     }
-    return minEval === Infinity ? evaluateBoard(node) : minEval;
+    const out = (minEval === Infinity) ? evaluateBoard(node) : minEval;
+    cache.set(key,out);
+    return out;
   }
+}
+
+/* === Expectimax === */
+function expectimax(node, depth){
+  const key = keyFor(node, depth, true, 'expectimax');
+  if(cache.has(key)) return cache.get(key);
+  if(depth === 0 || isGameOver(node)) return evaluateBoard(node);
+  let maxEval = -Infinity;
+  const moves = [moveLeft, moveRight, moveUp, moveDown];
+  for(const mv of moves){
+    const res = mv(node);
+    if(res.moved){
+      const val = expectChance(res.board, depth-1);
+      maxEval = Math.max(maxEval, val);
+    }
+  }
+  const out = (maxEval === -Infinity) ? evaluateBoard(node) : maxEval;
+  cache.set(key,out);
+  return out;
+}
+
+function expectChance(node, depth){
+  const empty = [];
+  for(let i=0;i<4;i++) for(let j=0;j<4;j++) if(node[i][j]===0) empty.push([i,j]);
+  if(empty.length===0) return evaluateBoard(node);
+  if(depth === 0) return evaluateBoard(node);
+  let total = 0;
+  for(const [r,c] of empty){
+    const nb1 = node.map(row=>row.slice()); nb1[r][c] = 1;
+    const nb2 = node.map(row=>row.slice()); nb2[r][c] = 2;
+    const v1 = expectimax(nb1, depth-1);
+    const v2 = expectimax(nb2, depth-1);
+    total += (prob1 * v1 + (1-prob1) * v2);
+  }
+  return total / empty.length;
+}
+
+/* === Key for caching === */
+function keyFor(boardState, depth, flag, tag){
+  const rows = boardState.map(r=>r.join('')).join('|');
+  return rows + ':' + depth + ':' + (flag?1:0) + ':' + tag;
 }
 
 /* === Board evaluation === */
@@ -365,18 +835,50 @@ function evaluateBoard(b){
     if(b[i][j]===0) empty++;
     else maxTile = Math.max(maxTile, b[i][j]);
   }
-  // monotonicity-ish
-  let mono=0;
+  let monoScore = 0;
   for(let i=0;i<4;i++){
     for(let j=0;j<3;j++){
-      if(b[i][j] >= b[i][j+1]) mono++;
-      if(b[j][i] >= b[j+1][i]) mono++;
+      if(b[i][j] >= b[i][j+1]) monoScore++;
+      if(b[j][i] >= b[j+1][i]) monoScore++;
     }
   }
-  // corner bonus
-  let corner=0, corners=[[0,0],[0,3],[3,0],[3,3]];
+  let smooth = 0;
+  const dirs = [[0,1],[1,0]];
+  for(let i=0;i<4;i++){
+    for(let j=0;j<4;j++){
+      if(b[i][j]===0) continue;
+      for(const [dr,dc] of dirs){
+        const ni=i+dr, nj=j+dc;
+        if(ni<4 && nj<4 && b[ni][nj]!==0){
+          smooth += Math.abs(b[i][j] - b[ni][nj]);
+        }
+      }
+    }
+  }
+  let mergePotential = 0;
+  for(let i=0;i<4;i++){
+    for(let j=0;j<3;j++){
+      if(b[i][j] !==0 && b[i][j] === b[i][j+1]) mergePotential++;
+      if(b[j][i] !==0 && b[j][i] === b[j+1][i]) mergePotential++;
+    }
+  }
+  let corner = 0; const corners=[[0,0],[0,3],[3,0],[3,3]];
   for(const [r,c] of corners) if(b[r][c]===maxTile){ corner = maxTile; break; }
-  return empty*100 + mono*10 + corner;
+
+  const w_empty = 150;
+  const w_max = 80;
+  const w_mono = 12;
+  const w_smooth = 10;
+  const w_merge = 200;
+  const w_corner = 220;
+
+  const value = (w_empty * empty)
+              + (w_max * maxTile)
+              + (w_mono * monoScore)
+              - (w_smooth * smooth)
+              + (w_merge * mergePotential)
+              + (w_corner * corner);
+  return value;
 }
 
 /* === Game over check === */
@@ -387,7 +889,7 @@ function isGameOver(bd){
   return true;
 }
 
-/* === Moves (pure: return new board, score, moved) === */
+/* === Moves === */
 function moveLeft(boardIn){
   const newB = boardIn.map(row => row.slice());
   let totalScore = 0, moved=false;
@@ -395,7 +897,6 @@ function moveLeft(boardIn){
     const original = newB[i].slice();
     let arr = newB[i].filter(v=>v!==0);
     while(arr.length<4) arr.push(0);
-    // combine
     for(let k=0;k<3;k++){
       if(arr[k] !== 0 && arr[k] === arr[k+1] && arr[k] < 11){
         arr[k] = arr[k] + 1;
@@ -403,7 +904,6 @@ function moveLeft(boardIn){
         totalScore += arr[k];
       }
     }
-    // slide again
     arr = arr.filter(v=>v!==0);
     while(arr.length<4) arr.push(0);
     newB[i] = arr;
@@ -413,7 +913,6 @@ function moveLeft(boardIn){
 }
 
 function moveRight(boardIn){
-  // reverse each row, moveLeft, then reverse back
   const reversed = boardIn.map(r => r.slice().reverse());
   const res = moveLeft(reversed);
   const final = res.board.map(r => r.slice().reverse());
@@ -482,6 +981,21 @@ function updateDisplay(state=null){
   }
 }
 
+function updateStats(){
+  let maxTile = 0;
+  let emptyCells = 0;
+  for(let i=0;i<4;i++){
+    for(let j=0;j<4;j++){
+      if(board[i][j] > maxTile) maxTile = board[i][j];
+      if(board[i][j] === 0) emptyCells++;
+    }
+  }
+  
+  document.getElementById('maxTile').textContent = maxTile;
+  document.getElementById('emptyCells').textContent = emptyCells;
+  document.getElementById('highScore').textContent = highScore;
+}
+
 function renderEvaluations(){
   const grid = document.getElementById('evalGrid');
   const chosenEl = document.getElementById('chosenMove');
@@ -509,6 +1023,31 @@ function renderEvaluations(){
 
   if(lastMove){
     chosenEl.innerHTML = '<strong style="color:#10b981;">Chosen (executed): ' + lastMove + '</strong>';
+  }
+}
+
+/* === Keyboard controls === */
+function handleKeyPress(e){
+  if(setupMode){
+    let moveFunc = null;
+    switch(e.key){
+      case 'ArrowLeft': moveFunc = moveLeft; break;
+      case 'ArrowRight': moveFunc = moveRight; break;
+      case 'ArrowUp': moveFunc = moveUp; break;
+      case 'ArrowDown': moveFunc = moveDown; break;
+    }
+    
+    if(moveFunc){
+      e.preventDefault();
+      const result = moveFunc(board);
+      if(result.moved){
+        board = result.board;
+        score += result.score;
+        moves++;
+        renderBoard();
+        updateStats();
+      }
+    }
   }
 }
 
